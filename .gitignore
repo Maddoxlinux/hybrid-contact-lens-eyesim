@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+.streamlit/secrets.toml
+*.egg-info/
+install_log.txt
+
+# kept out of the public deployment repo by default (your academic proposal).
+# delete this line if you want it included.
+PROJECT PROPOSAL.docx
