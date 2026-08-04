@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 from eyesim.eye import build_navarro_eye
-from eyesim.lens import build_hybrid_lens, fit_base_power, fit_diffractive_power
+from eyesim.lens import build_hybrid_lens, auto_fit_lens
 from eyesim.metrics import (spot_diagram, geometric_mtf,
                             longitudinal_chromatic_aberration, MM_PER_DEG)
 from eyesim.optimize import optimize_hybrid_lens
@@ -46,9 +46,8 @@ def get_states(error_D, pupil, material, design_lam, use_lens,
         diff = man_diff if use_diffractive else 0.0
         a4 = 0.0
     elif mode == "Auto-fit":
-        base = fit_base_power(builder, pupil, design_lam, material, design_lam)
-        diff = (fit_diffractive_power(builder, base, pupil, material, design_lam)
-                if use_diffractive else 0.0)
+        base, diff = auto_fit_lens(builder, pupil, material, design_lam,
+                                   use_diffractive)
         a4 = 0.0
     else:  # Optimize
         res = optimize_hybrid_lens(builder, pupil, design_lam, material,

@@ -15,7 +15,7 @@ from eyesim.eye import build_navarro_eye, NOMINAL_AXIAL_LENGTH
 from eyesim.raytrace import System, paraxial_power
 from eyesim.metrics import (spot_diagram, longitudinal_chromatic_aberration,
                             geometric_mtf)
-from eyesim.lens import build_hybrid_lens, fit_base_power, fit_diffractive_power
+from eyesim.lens import build_hybrid_lens, auto_fit_lens
 from eyesim.optimize import optimize_hybrid_lens
 
 LAMS = np.array([0.45, 0.50, 0.55, 0.60, 0.65])
@@ -80,6 +80,20 @@ line(f"   (uncorrected green RMS = {s_un['rms_um']:6.1f} um, "
      f"LCA = {lca_un['lca_D']:4.2f} D)")
 check("correction sharpens focus", opt["poly_rms_um"] < s_un["rms_um"])
 check("diffractive reduces |LCA|", abs(opt["lca_D"]) < abs(lca_un["lca_D"]))
+
+line("\n4b. Auto-fit mode (fast fitting used by the apps) for several errors")
+for E in (-3.0, +2.0, -6.0):
+    b = partial(build_navarro_eye, E, pupil_diameter=4.0, lam_ref_um=GREEN)
+    base, diff = auto_fit_lens(b, 4.0, "silicone-hydrogel", GREEN, True)
+    lensE = build_hybrid_lens(base, diff, GREEN)
+    corE = build_navarro_eye(E, 4.0, GREEN, front_optics=lensE.surfaces)
+    rmsE = spot_diagram(corE.system, 4.0, GREEN)["rms_um"]
+    lcaE = longitudinal_chromatic_aberration(corE.system, LAMS, GREEN)["lca_D"]
+    unE = spot_diagram(build_navarro_eye(E, 4.0, GREEN).system, 4.0, GREEN)["rms_um"]
+    line(f"   E={E:+.1f}  base={base:5.1f} diff={diff:4.1f}  "
+         f"corrected RMS={rmsE:5.1f} um (uncorr {unE:5.1f}), LCA={lcaE:+.2f} D")
+    check(f"auto-fit sharp (E={E:+.0f}, RMS < 15 um)", rmsE < 15)
+    check(f"auto-fit cuts LCA >5x (E={E:+.0f})", abs(lcaE) < 1.68 / 5)
 
 line("\n5. MTF smoke test")
 f, m = geometric_mtf(eye0.system, 4.0, LAMS, nrays=8000, N=128)
