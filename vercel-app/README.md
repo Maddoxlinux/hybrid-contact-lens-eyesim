@@ -15,6 +15,17 @@ vercel-app/
   vercel.json         function memory / duration
 ```
 
+## Preview locally (no Vercel needed)
+
+```bash
+cd vercel-app
+pip install numpy
+python devserver.py       # serves page + API together
+```
+
+Open <http://localhost:8000>. (The 3-D view loads Three.js from a CDN, so the
+browser needs internet; all the physics runs locally.)
+
 ## Deploy on Vercel
 
 Everything is already in the GitHub repo, so:
