@@ -28,7 +28,6 @@ LCA_LAMS = np.linspace(0.45, 0.65, 9)
 # --------------------------------------------------------------------------
 # cached computations
 # --------------------------------------------------------------------------
-@st.cache_data(show_spinner=False)
 def get_states(error_D, pupil, material, design_lam, use_lens,
                use_diffractive, mode, man_base, man_diff, opt_a4):
     """Return the three eye states and the fitted lens parameters."""
@@ -66,10 +65,8 @@ def get_states(error_D, pupil, material, design_lam, use_lens,
     return normal, uncorr, corrected, info
 
 
-@st.cache_data(show_spinner=False)
-def mtf_curve(_system, pupil, tag):
-    f, m = geometric_mtf(_system, pupil, LCA_LAMS[::2], nrays=16000, N=192)
-    return f, m
+def mtf_curve(system, pupil):
+    return geometric_mtf(system, pupil, LCA_LAMS[::2], nrays=14000, N=192)
 
 
 # --------------------------------------------------------------------------
@@ -100,7 +97,7 @@ def plot_mtf(states, pupil):
     labels = ["Normal eye", "Uncorrected", "Corrected"]
     colors = ["#555555", "#e23b3b", "#2ca02c"]
     for sysobj, lab, c in zip(states, labels, colors):
-        f, m = mtf_curve(sysobj.system, pupil, lab)
+        f, m = mtf_curve(sysobj.system, pupil)
         ax.plot(f, m, label=lab, color=c, lw=2)
     ax.set_xlim(0, 60); ax.set_ylim(0, 1.02)
     ax.set_xlabel("Spatial frequency (cycles/degree)")
