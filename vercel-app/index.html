@@ -410,6 +410,14 @@ function run(){
 document.querySelectorAll("#mode button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.m;run();});
 document.querySelectorAll("#view button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#view button").forEach(x=>x.classList.remove("active"));b.classList.add("active");view=b.dataset.v;buildScene();});
 ["err","pup","dw","mat","lens","diff"].forEach(id=>$(id).addEventListener("input",run));
+// optional deep-link: ?view=corrected&err=-3&pupil=4&lens=1&diff=1
+const q=new URLSearchParams(location.search);
+if(q.get("err"))$("err").value=q.get("err");
+if(q.get("pupil"))$("pup").value=q.get("pupil");
+if(q.get("lens")!==null&&q.get("lens")!==undefined&&q.has("lens"))$("lens").checked=q.get("lens")!=="0";
+if(q.has("diff"))$("diff").checked=q.get("diff")!=="0";
+if(q.get("view")){view=q.get("view");
+  document.querySelectorAll("#view button").forEach(x=>x.classList.toggle("active",x.dataset.v===view));}
 sizeStage(); sync(); run();
 </script>
 </body>
