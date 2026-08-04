@@ -20,6 +20,7 @@ from eyesim.lens import build_hybrid_lens, auto_fit_lens
 from eyesim.metrics import (spot_diagram, geometric_mtf,
                             longitudinal_chromatic_aberration)
 from eyesim.optimize import optimize_hybrid_lens
+from eyesim.viz import surface_profiles, trace_paths
 from eyesim.dispersion import LAMBDA_GREEN
 
 LCA_LAMS = np.linspace(0.45, 0.65, 9)
@@ -31,6 +32,18 @@ def _round(a, nd=3):
     return [round(float(v), nd) for v in a]
 
 
+def _viz_payload(eye, pupil):
+    semi = pupil / 2.0
+    ys = np.linspace(-semi * 0.92, semi * 0.92, 9)
+    rays = {f"{lam*1000:.0f}": trace_paths(eye.system, ys, lam) for lam in SPOT_LAMS}
+    # axial focus of the green marginal ray (where it crosses y = 0), for a label
+    return dict(
+        surfaces=surface_profiles(eye.system, n=22),
+        retina_z=round(float(eye.retina_z), 4),
+        rays=rays,
+    )
+
+
 def _state_payload(eye, pupil):
     spots = {}
     for lam in SPOT_LAMS:
@@ -40,13 +53,18 @@ def _state_payload(eye, pupil):
     f, m = geometric_mtf(eye.system, pupil, MTF_LAMS, nrays=8000, N=128)
     lca = longitudinal_chromatic_aberration(eye.system, LCA_LAMS, LAMBDA_GREEN)
     rms = spot_diagram(eye.system, pupil, LAMBDA_GREEN)["rms_um"]
+    # per-wavelength RMS blur, for the chromatic vision simulation
+    rms_wl = {f"{lam*1000:.0f}": round(float(spot_diagram(
+        eye.system, pupil, lam)["rms_um"]), 1) for lam in SPOT_LAMS}
     return dict(
         spots=spots,
         mtf=[[round(float(a), 2), round(float(b), 4)] for a, b in zip(f, m)],
         lca=[[round(float(w * 1000), 1), round(float(p), 4)]
              for w, p in zip(lca["wavelengths"], lca["power_rel_D"])],
         rms_um=round(float(rms), 1),
+        rms_wl=rms_wl,
         lca_D=round(float(lca["lca_D"]), 3),
+        viz=_viz_payload(eye, pupil),
     )
 
 

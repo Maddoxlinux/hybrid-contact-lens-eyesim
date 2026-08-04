@@ -74,16 +74,24 @@ class ConicSurface(Surface):
         b = 2.0 * (x0 * L + y0 * M + K * z0 * N - R * N)
         c = x0 * x0 + y0 * y0 + K * z0 * z0 - 2.0 * R * z0
 
-        disc = b * b - 4.0 * a * c
-        valid = disc >= 0
-        sq = np.sqrt(np.where(valid, disc, 0.0))
-        # two roots; choose the physically forward one nearest the vertex
+        eps = 1e-9
         with np.errstate(divide="ignore", invalid="ignore"):
+            # degenerate (near-linear) case: a ~ 0, e.g. a paraboloid (k=-1)
+            # hit by an axial ray. The quadratic collapses to b*t + c = 0.
+            t_lin = np.where(np.abs(b) > 1e-30, -c / b, np.nan)
+
+            disc = b * b - 4.0 * a * c
+            sq = np.sqrt(np.where(disc >= 0, disc, 0.0))
             t1 = (-b - sq) / (2.0 * a)
             t2 = (-b + sq) / (2.0 * a)
-        # pick the smaller positive root
-        t = np.where((t1 > 1e-9), t1, t2)
-        t = np.where(valid & (t > 1e-9), t, np.nan)
+            # nearest forward (positive) root
+            tp1 = np.where(t1 > eps, t1, np.inf)
+            tp2 = np.where(t2 > eps, t2, np.inf)
+            tq = np.minimum(tp1, tp2)
+            tq = np.where((disc >= 0) & np.isfinite(tq), tq, np.nan)
+
+        t = np.where(np.abs(a) < 1e-12, t_lin, tq)
+        t = np.where(t > eps, t, np.nan)
         return t
 
     def normal(self, p):

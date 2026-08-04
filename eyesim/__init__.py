@@ -25,6 +25,7 @@ from .raytrace import System, trace_rays, paraxial_power
 from .eye import build_navarro_eye, EyeModel
 from .lens import build_hybrid_lens, ContactLens, auto_fit_lens
 from .metrics import spot_diagram, geometric_mtf, longitudinal_chromatic_aberration
+from .viz import system_geometry, surface_profiles, trace_paths
 
 __all__ = [
     "OcularMedia", "cauchy_index", "PHOTOPIC",
@@ -33,6 +34,7 @@ __all__ = [
     "build_navarro_eye", "EyeModel",
     "build_hybrid_lens", "ContactLens", "auto_fit_lens",
     "spot_diagram", "geometric_mtf", "longitudinal_chromatic_aberration",
+    "system_geometry", "surface_profiles", "trace_paths",
 ]
 
 __version__ = "0.1.0"

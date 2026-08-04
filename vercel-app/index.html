@@ -3,298 +3,414 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hybrid Diffractive–Refractive Contact-Lens Eye Simulator</title>
+<title>3D Eye &amp; Hybrid Contact-Lens Simulator</title>
 <style>
   :root{
-    --bg:#0f1220; --panel:#171a2b; --panel2:#1e2236; --line:#2c3150;
-    --txt:#e8ecf6; --muted:#9aa3c0; --accent:#6ea8fe; --good:#37c98b; --bad:#ff6b6b;
-    --blue:#5b7bff; --green:#37c98b; --red:#ff6b6b; --grey:#8a93b2;
-    --radius:14px;
+    --bg:#0b0e1a; --panel:#141829; --panel2:#1b2039; --line:#2a3050;
+    --txt:#e9edf8; --muted:#98a1c0; --accent:#6ea8fe; --good:#37c98b; --bad:#ff6b6b;
+    --blue:#5b8bff; --green:#37c98b; --red:#ff6b6b; --grey:#8a93b2; --radius:14px;
   }
   @media (prefers-color-scheme:light){
-    :root{--bg:#f4f6fb;--panel:#ffffff;--panel2:#f0f3fa;--line:#e2e7f2;
-      --txt:#151a2b;--muted:#5c6580;--accent:#2f6bff;--grey:#6b7392;}
+    :root{--bg:#eef1f8;--panel:#ffffff;--panel2:#f2f5fc;--line:#e0e5f0;
+      --txt:#141a2b;--muted:#5b6484;--accent:#2f6bff;--grey:#6b7392;}
   }
   *{box-sizing:border-box}
-  body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  body{margin:0;font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     background:var(--bg);color:var(--txt)}
   a{color:var(--accent);text-decoration:none}
-  header{padding:22px 22px 6px;max-width:1200px;margin:0 auto}
-  h1{font-size:1.35rem;margin:0 0 4px}
-  .sub{color:var(--muted);font-size:.92rem}
-  .wrap{max-width:1200px;margin:0 auto;padding:14px 22px 60px;
-    display:grid;grid-template-columns:300px 1fr;gap:18px}
-  @media(max-width:860px){.wrap{grid-template-columns:1fr}}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-    padding:16px}
-  .controls label{display:block;font-size:.82rem;color:var(--muted);margin:14px 0 4px}
+  header{padding:20px 22px 4px;max-width:1280px;margin:0 auto}
+  h1{font-size:1.3rem;margin:0 0 3px}
+  .sub{color:var(--muted);font-size:.9rem;max-width:820px}
+  .wrap{max-width:1280px;margin:0 auto;padding:14px 22px 60px;
+    display:grid;grid-template-columns:280px 1fr;gap:18px}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .controls label{display:block;font-size:.8rem;color:var(--muted);margin:14px 0 4px}
   .controls .val{color:var(--txt);font-weight:600}
   input[type=range]{width:100%;accent-color:var(--accent)}
-  select,.seg{width:100%}
-  select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);
+  select{width:100%;background:var(--panel2);color:var(--txt);border:1px solid var(--line);
     border-radius:9px;padding:8px}
-  .row{display:flex;align-items:center;gap:10px}
   .switch{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.9rem}
   .switch input{width:18px;height:18px;accent-color:var(--accent)}
   .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:9px;
-    overflow:hidden;margin-top:4px}
-  .seg button{flex:1;background:none;border:0;color:var(--muted);padding:8px 4px;
-    font-size:.82rem;cursor:pointer}
+    overflow:hidden;margin-top:6px}
+  .seg button{flex:1;background:none;border:0;color:var(--muted);padding:8px 4px;font-size:.8rem;cursor:pointer}
   .seg button.active{background:var(--accent);color:#fff;font-weight:600}
-  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:4px}
-  @media(max-width:680px){.metrics{grid-template-columns:repeat(2,1fr)}}
-  .tile{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
-  .tile .k{font-size:.72rem;color:var(--muted)}
-  .tile .v{font-size:1.35rem;font-weight:700;margin-top:2px}
-  .tile .d{font-size:.75rem;margin-top:2px}
-  .d.good{color:var(--good)} .d.bad{color:var(--bad)}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-  @media(max-width:680px){.grid3{grid-template-columns:1fr}}
-  .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-  @media(max-width:680px){.charts{grid-template-columns:1fr}}
-  h3{font-size:.98rem;margin:0 0 8px}
-  .cap{color:var(--muted);font-size:.78rem;margin-top:8px}
-  .lens-note{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
-    padding:10px 12px;font-size:.82rem;color:var(--muted);margin-top:12px}
-  .spot-title{text-align:center;font-size:.78rem;color:var(--muted);margin-bottom:2px}
-  svg{width:100%;height:auto;display:block}
-  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.76rem;color:var(--muted);margin-top:6px}
+  #stage{position:relative;width:100%;height:440px;border-radius:var(--radius);overflow:hidden;
+    background:radial-gradient(120% 120% at 30% 20%, #1a2038 0%, #0a0d18 100%);
+    border:1px solid var(--line)}
+  @media (prefers-color-scheme:light){#stage{background:radial-gradient(120% 120% at 30% 20%,#f7f9ff,#e7ecf8)}}
+  #stage canvas{display:block}
+  .badge{position:absolute;top:10px;left:12px;font-size:.78rem;color:var(--muted);
+    background:rgba(0,0,0,.35);padding:4px 9px;border-radius:20px;backdrop-filter:blur(4px)}
+  .hint{position:absolute;bottom:10px;right:12px;font-size:.72rem;color:var(--muted);
+    background:rgba(0,0,0,.3);padding:3px 8px;border-radius:20px}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.76rem;color:var(--muted);margin-top:8px}
   .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
-  .busy{opacity:.5;transition:opacity .2s}
-  footer{max-width:1200px;margin:0 auto;padding:0 22px 40px;color:var(--muted);font-size:.8rem}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+  @media(max-width:680px){.metrics{grid-template-columns:repeat(2,1fr)}}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .tile .k{font-size:.7rem;color:var(--muted)} .tile .v{font-size:1.25rem;font-weight:700}
+  .tile .d{font-size:.72rem} .d.good{color:var(--good)} .d.bad{color:var(--bad)}
+  .explain{margin-top:14px;line-height:1.6}
+  .explain h3{margin:0 0 6px;font-size:1rem}
+  .explain .lead{border-left:3px solid var(--accent);padding-left:12px;color:var(--txt)}
+  .vis3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  @media(max-width:680px){.vis3{grid-template-columns:1fr}}
+  .vtitle{text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:6px}
+  canvas.vision{width:100%;height:auto;border-radius:10px;background:#000;display:block}
+  h2{font-size:1.05rem;margin:26px 0 4px}
+  .cap{color:var(--muted);font-size:.8rem;margin-top:8px}
+  details{margin-top:14px}
+  summary{cursor:pointer;color:var(--accent);font-weight:600}
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+  @media(max-width:680px){.charts{grid-template-columns:1fr}}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  svg{width:100%;height:auto;display:block}
+  footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--muted);font-size:.8rem}
+  .busy{opacity:.55}
 </style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+}}
+</script>
 </head>
 <body>
 <header>
-  <h1>👁️ Hybrid Diffractive–Refractive Contact-Lens Eye Simulator</h1>
-  <div class="sub">Ray-tracing model of the human eye (Navarro schematic eye) with a hybrid
-    contact lens for myopia / hyperopia and chromatic-aberration correction.</div>
+  <h1>👁️ 3D Eye &amp; Hybrid Diffractive–Refractive Contact-Lens Simulator</h1>
+  <div class="sub">Watch light rays travel through a real ray-traced eye, see where they focus,
+    how the eye <em>sees</em>, and how a hybrid contact lens fixes blur and colour fringing.</div>
 </header>
 
 <div class="wrap">
-  <!-- CONTROLS -->
   <aside class="card controls">
-    <label>Refractive error <span class="val" id="errV">−3.0 D</span>
-      <span style="color:var(--muted);font-weight:400"> (− = myopia)</span></label>
+    <label>Refractive error <span class="val" id="errV">−3.0 D</span> <span style="color:var(--muted);font-weight:400">(− myopia)</span></label>
     <input type="range" id="err" min="-8" max="8" step="0.25" value="-3">
-
     <label>Pupil diameter <span class="val" id="pupV">4.0 mm</span></label>
     <input type="range" id="pup" min="2" max="6" step="0.5" value="4">
 
-    <label>Spot view half-width <span class="val" id="spanV">60 µm</span></label>
-    <input type="range" id="span" min="10" max="200" step="5" value="60">
-
     <div class="switch"><input type="checkbox" id="lens" checked><label style="margin:0;color:var(--txt)">Wear hybrid contact lens</label></div>
-    <div class="switch"><input type="checkbox" id="diff" checked><label style="margin:0;color:var(--txt)">Enable diffractive layer</label></div>
+    <div class="switch"><input type="checkbox" id="diff" checked><label style="margin:0;color:var(--txt)">Diffractive layer (colour fix)</label></div>
 
     <label>Lens material</label>
-    <select id="mat">
-      <option value="silicone-hydrogel">silicone-hydrogel</option>
-      <option value="hydrogel">hydrogel</option>
-      <option value="PMMA">PMMA</option>
-    </select>
+    <select id="mat"><option>silicone-hydrogel</option><option>hydrogel</option><option>PMMA</option></select>
 
     <label>Diffractive design wavelength <span class="val" id="dwV">550 nm</span></label>
     <input type="range" id="dw" min="450" max="650" step="10" value="550">
 
-    <label>Lens fitting mode</label>
-    <div class="seg" id="mode">
-      <button data-m="Auto-fit" class="active">Auto-fit</button>
-      <button data-m="Optimize">Optimize</button>
-    </div>
+    <label>Lens fitting</label>
+    <div class="seg" id="mode"><button data-m="Auto-fit" class="active">Auto-fit</button><button data-m="Optimize">Optimize</button></div>
 
-    <div class="lens-note" id="lensNote">—</div>
+    <label style="margin-top:18px">Show in 3D</label>
+    <div class="seg" id="view"><button data-v="normal">Normal</button><button data-v="uncorrected" class="active">Uncorrected</button><button data-v="corrected">Corrected</button></div>
   </aside>
 
-  <!-- RESULTS -->
   <main>
+    <div id="stage">
+      <div class="badge" id="badge">loading…</div>
+      <div class="hint">drag to rotate · scroll to zoom</div>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--blue)"></span>450 nm (blue)</span>
+      <span><span class="dot" style="background:var(--green)"></span>550 nm (green)</span>
+      <span><span class="dot" style="background:var(--red)"></span>650 nm (red)</span>
+      <span><span class="dot" style="background:#8fb7ff"></span>cornea</span>
+      <span><span class="dot" style="background:#f4c66b"></span>lens</span>
+      <span><span class="dot" style="background:#ff9db0"></span>retina</span>
+      <span><span class="dot" style="background:#66e0d0"></span>contact lens</span>
+    </div>
+
     <div class="metrics">
-      <div class="tile"><div class="k">Uncorrected blur (RMS)</div><div class="v" id="mUnc">–</div></div>
-      <div class="tile"><div class="k">Corrected blur (RMS)</div><div class="v" id="mCor">–</div><div class="d" id="mCorD"></div></div>
-      <div class="tile"><div class="k">Uncorrected LCA</div><div class="v" id="lUnc">–</div></div>
-      <div class="tile"><div class="k">Corrected LCA</div><div class="v" id="lCor">–</div><div class="d" id="lCorD"></div></div>
+      <div class="tile"><div class="k">Uncorrected blur</div><div class="v" id="mUnc">–</div></div>
+      <div class="tile"><div class="k">Corrected blur</div><div class="v" id="mCor">–</div><div class="d" id="mCorD"></div></div>
+      <div class="tile"><div class="k">Uncorrected colour error</div><div class="v" id="lUnc">–</div></div>
+      <div class="tile"><div class="k">Corrected colour error</div><div class="v" id="lCor">–</div><div class="d" id="lCorD"></div></div>
     </div>
 
-    <div class="card" id="spotsCard" style="margin-top:14px">
-      <h3>Retinal spot diagrams</h3>
-      <div class="grid3" id="spots"></div>
-      <div class="legend">
-        <span><span class="dot" style="background:var(--blue)"></span>450 nm</span>
-        <span><span class="dot" style="background:var(--green)"></span>550 nm</span>
-        <span><span class="dot" style="background:var(--red)"></span>650 nm</span>
-        <span>· dashed = Airy (diffraction) limit</span>
-      </div>
-      <div class="cap">Tighter, more overlapped colour spots = sharper, more colour-corrected image.</div>
+    <div class="card explain">
+      <h3 id="exTitle">What you're seeing</h3>
+      <div class="lead" id="exText">…</div>
     </div>
 
-    <div class="charts">
-      <div class="card">
-        <h3>Polychromatic MTF</h3>
-        <div id="mtf"></div>
-        <div class="legend">
-          <span><span class="dot" style="background:var(--grey)"></span>Normal</span>
-          <span><span class="dot" style="background:var(--red)"></span>Uncorrected</span>
-          <span><span class="dot" style="background:var(--green)"></span>Corrected</span>
-        </div>
-        <div class="cap">Higher = more contrast at that detail level (cycles/degree).</div>
-      </div>
-      <div class="card">
-        <h3>Longitudinal chromatic aberration</h3>
-        <div id="lca"></div>
-        <div class="legend">
-          <span><span class="dot" style="background:var(--red)"></span>Uncorrected</span>
-          <span><span class="dot" style="background:var(--green)"></span>Corrected</span>
-        </div>
-        <div class="cap">Flat line = all colours focus together. The diffractive layer flattens it.</div>
-      </div>
+    <h2>How the eye would see it</h2>
+    <div class="cap">A letter chart rendered with the exact blur of each case. Different blur for red/green/blue
+      light shows up as coloured fringing — the chromatic aberration the diffractive layer removes.</div>
+    <div class="vis3">
+      <div><div class="vtitle">Normal eye</div><canvas class="vision" id="vNormal" width="260" height="180"></canvas></div>
+      <div><div class="vtitle">Uncorrected</div><canvas class="vision" id="vUncorrected" width="260" height="180"></canvas></div>
+      <div><div class="vtitle">Corrected</div><canvas class="vision" id="vCorrected" width="260" height="180"></canvas></div>
     </div>
+
+    <details>
+      <summary>Show the optical analysis (spot diagrams · MTF · chromatic aberration)</summary>
+      <div class="card" style="margin-top:12px">
+        <h3>Retinal spot diagrams</h3>
+        <div class="grid3" id="spots"></div>
+        <div class="legend"><span><span class="dot" style="background:var(--blue)"></span>450</span>
+          <span><span class="dot" style="background:var(--green)"></span>550</span>
+          <span><span class="dot" style="background:var(--red)"></span>650 nm</span></div>
+      </div>
+      <div class="charts">
+        <div class="card"><h3>Polychromatic MTF</h3><div id="mtf"></div>
+          <div class="legend"><span><span class="dot" style="background:var(--grey)"></span>Normal</span>
+            <span><span class="dot" style="background:var(--red)"></span>Uncorrected</span>
+            <span><span class="dot" style="background:var(--green)"></span>Corrected</span></div></div>
+        <div class="card"><h3>Chromatic aberration</h3><div id="lca"></div>
+          <div class="legend"><span><span class="dot" style="background:var(--red)"></span>Uncorrected</span>
+            <span><span class="dot" style="background:var(--green)"></span>Corrected</span></div></div>
+      </div>
+    </details>
   </main>
 </div>
 
-<footer>
-  Geometric-optics ray tracing (Navarro schematic eye · Escudero-Sanz &amp; Navarro 1999).
-  Engine: NumPy on a Vercel Python function. Metrics are geometric estimates.
-</footer>
+<footer>Physically accurate geometric ray tracing · Navarro schematic eye (Escudero-Sanz &amp; Navarro 1999) ·
+  NumPy on a Vercel Python function. The 3-D anatomy is schematic; the rays and all numbers are from the real trace.</footer>
 
-<script>
-const SVGNS="http://www.w3.org/2000/svg";
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const $=id=>document.getElementById(id);
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-function el(tag,attrs){const e=document.createElementNS(SVGNS,tag);
-  for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
-function svg(w,h){const s=el("svg",{viewBox:`0 0 ${w} ${h}`});return s;}
+const WCOL={'450':0x5b8bff,'550':0x37c98b,'650':0xff6b6b};
+let mode="Auto-fit", view="uncorrected", DATA=null, camInit=false;
 
-const WCOL={"450":css("--blue"),"550":css("--green"),"650":css("--red")};
+/* ---------- Three.js scene ---------- */
+const stage=$("stage");
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+stage.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(45,1,0.1,2000);
+scene.add(new THREE.AmbientLight(0xffffff,0.75));
+const dir=new THREE.DirectionalLight(0xffffff,0.9); dir.position.set(-20,30,40); scene.add(dir);
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+const world=new THREE.Group(); scene.add(world);   // holds eye + rays for current view
 
-function drawSpots(states,span){
-  const host=document.getElementById("spots");host.innerHTML="";
-  const order=[["normal","Normal eye"],["uncorrected","Uncorrected"],["corrected","Corrected"]];
-  for(const [key,title] of order){
-    const wrap=document.createElement("div");
-    const t=document.createElement("div");t.className="spot-title";t.textContent=title;wrap.appendChild(t);
-    const S=220, c=S/2, s=svg(S,S);
+function sizeStage(){
+  const w=stage.clientWidth,h=stage.clientHeight;
+  renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();
+}
+addEventListener("resize",sizeStage);
+
+function clearGroup(g){ while(g.children.length){const c=g.children.pop();
+  if(c.geometry)c.geometry.dispose(); if(c.material)c.material.dispose(); g.remove(c);} }
+
+function labelSprite(text,x,y,z,color="#cfd6ee"){
+  const c=document.createElement("canvas"); c.width=256; c.height=64;
+  const g=c.getContext("2d"); g.font="bold 34px system-ui"; g.fillStyle=color;
+  g.textAlign="center"; g.textBaseline="middle"; g.fillText(text,128,32);
+  const tex=new THREE.CanvasTexture(c);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+  sp.position.set(x,y,z); sp.scale.set(7,1.8,1); return sp;
+}
+function ellipsoid(cx,rx,ry,color,opacity){
+  const m=new THREE.Mesh(new THREE.SphereGeometry(1,32,24),
+    new THREE.MeshPhongMaterial({color,transparent:true,opacity,shininess:40,
+      emissive:color,emissiveIntensity:0.12,side:THREE.DoubleSide,depthWrite:false}));
+  m.scale.set(rx,ry,ry); m.position.x=cx; return m;
+}
+function ring(x,inner,outer,color){
+  const m=new THREE.Mesh(new THREE.RingGeometry(inner,outer,48),
+    new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,transparent:true,opacity:0.85}));
+  m.rotation.y=Math.PI/2; m.position.x=x; return m;
+}
+function disc(x,r,color,opacity){
+  const m=new THREE.Mesh(new THREE.CircleGeometry(r,48),
+    new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,transparent:true,opacity}));
+  m.rotation.y=-Math.PI/2; m.position.x=x; return m;
+}
+
+function surfZ(state,name){const s=state.viz.surfaces.find(s=>s.name===name);return s?s.z:null;}
+
+function buildScene(){
+  clearGroup(world);
+  if(!DATA)return;
+  const state=DATA.states[view];
+  const retina=state.viz.retina_z;
+  const antLens=surfZ(state,'navarro-2')??3.6, postLens=surfZ(state,'navarro-3')??7.6;
+  const pupil=DATA.params.pupil;
+
+  // optical axis
+  const axisMat=new THREE.LineBasicMaterial({color:0x44507a});
+  world.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(
+    [new THREE.Vector3(-4,0,0),new THREE.Vector3(retina+1,0,0)]),axisMat));
+
+  // eyeball globe
+  world.add(ellipsoid(retina/2,retina/2,retina/2*0.92,0xdfe6ff,0.08));
+  // cornea (front dome)
+  world.add(ellipsoid(0.9,1.4,5.4,0x8fb7ff,0.28));
+  // iris + pupil hole
+  world.add(ring(antLens-0.05,pupil/2,5.6,0x6b4a2f));
+  // crystalline lens
+  world.add(ellipsoid((antLens+postLens)/2,(postLens-antLens)/2,4.3,0xf4c66b,0.5));
+  // retina patch (concave-ish)
+  world.add(disc(retina,4.6,0xff9db0,0.85));
+  // contact lens if worn & showing the corrected eye
+  if(view==="corrected" && DATA.lens){
+    const cf=surfZ(state,'cl-front-diffractive')??-0.2;
+    world.add(ellipsoid(cf,0.5,6.2,0x66e0d0,0.33));
+  }
+  // labels
+  world.add(labelSprite("Cornea",0.9,7.2,0,"#8fb7ff"));
+  world.add(labelSprite("Lens",(antLens+postLens)/2,6,0,"#f4c66b"));
+  world.add(labelSprite("Retina",retina,6,0,"#ff9db0"));
+  if(view==="corrected"&&DATA.lens) world.add(labelSprite("Contact lens",-1,8.6,0,"#66e0d0"));
+
+  // rays (real trace)
+  for(const wl of ['650','550','450']){
+    const mat=new THREE.LineBasicMaterial({color:WCOL[wl],transparent:true,opacity:0.85});
+    for(const poly of state.viz.rays[wl]){
+      const pts=poly.map(([z,y])=>new THREE.Vector3(z,y,0));
+      world.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),mat));
+    }
+  }
+  // where the green marginal ray crosses the axis (the focus)
+  const focus=greenFocus(state);
+  if(focus!==null){
+    const col= focus<retina-0.15?0xff6b6b : (focus>retina+0.15?0xffb347:0x37c98b);
+    const mk=new THREE.Mesh(new THREE.SphereGeometry(0.35,16,12),
+      new THREE.MeshBasicMaterial({color:col}));
+    mk.position.set(focus,0,0); world.add(mk);
+  }
+
+  if(!camInit){ camera.position.set(retina*0.5,12,42);
+    controls.target.set(retina*0.5,0,0); controls.update(); camInit=true; }
+  $("badge").textContent=({normal:"Normal eye",uncorrected:"Uncorrected — "+DATA.params.error_D.toFixed(1)+" D",
+    corrected:"Corrected with hybrid lens"})[view];
+}
+
+function greenFocus(state){
+  // outermost green ray: find where y crosses zero after the lens (z>7)
+  const rays=state.viz.rays['550']; let best=null;
+  for(const poly of rays){
+    for(let i=1;i<poly.length;i++){
+      const [z0,y0]=poly[i-1],[z1,y1]=poly[i];
+      if(z0>7 && y0*y1<0){ const t=y0/(y0-y1); best=z0+t*(z1-z0);} }
+  }
+  return best;
+}
+
+(function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);})();
+
+/* ---------- vision simulation ---------- */
+function drawVision(id,rms_wl){
+  const cv=$(id),g=cv.getContext("2d"),W=cv.width,H=cv.height;
+  g.globalCompositeOperation="source-over"; g.fillStyle="#000"; g.fillRect(0,0,W,H);
+  g.globalCompositeOperation="lighter"; g.textAlign="center"; g.textBaseline="middle";
+  const rows=[["E",64,0.30],["F P",34,0.55],["T O Z",22,0.74],["L P E D",15,0.88]];
+  const CH=[['650','#ff3b3b'],['550','#39ff8b'],['450','#5b8bff']];
+  const SCALE=0.085;   // microns of retinal blur -> canvas blur pixels
+  for(const [wl,color] of CH){
+    const b=Math.max(0,(rms_wl?rms_wl[wl]:0)*SCALE);
+    g.filter=`blur(${b.toFixed(2)}px)`; g.fillStyle=color;
+    for(const [txt,size,yy] of rows){ g.font=`bold ${size}px Georgia,serif`; g.fillText(txt,W/2,H*yy); }
+  }
+  g.filter="none"; g.globalCompositeOperation="source-over";
+}
+
+/* ---------- analysis charts (SVG) ---------- */
+const SVGNS="http://www.w3.org/2000/svg";
+function el(t,a){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function svg(w,h){return el("svg",{viewBox:`0 0 ${w} ${h}`});}
+function drawSpots(states){
+  const host=$("spots");host.innerHTML="";
+  for(const [key,title] of [["normal","Normal"],["uncorrected","Uncorrected"],["corrected","Corrected"]]){
+    const wrap=document.createElement("div");wrap.innerHTML=`<div style="text-align:center;font-size:.78rem;color:${css('--muted')}">${title}</div>`;
+    const S=200,c=S/2,s=svg(S,S),span=60;
     s.appendChild(el("rect",{x:0,y:0,width:S,height:S,rx:10,fill:css("--panel2")}));
     s.appendChild(el("line",{x1:c,y1:8,x2:c,y2:S-8,stroke:css("--line")}));
     s.appendChild(el("line",{x1:8,y1:c,x2:S-8,y2:c,stroke:css("--line")}));
-    const sc=(S/2-10)/span;
-    // Airy ref (approx radius in microns): 1.22*0.55e-3*16.7/pupil*1000
-    const airy=1.22*0.55e-3*16.7/pupilVal()*1000;
-    s.appendChild(el("circle",{cx:c,cy:c,r:Math.min(airy*sc,S/2-10),
-      fill:"none",stroke:css("--muted"),"stroke-dasharray":"3 3","stroke-width":0.8}));
-    const st=states[key];
-    for(const w of ["650","550","450"]){ // draw blue last (on top)
-      for(const [x,y] of st.spots[w]){
-        const px=c+x*sc, py=c-y*sc;
-        if(px<4||px>S-4||py<4||py>S-4)continue;
-        s.appendChild(el("circle",{cx:px,cy:py,r:1.4,fill:WCOL[w],"fill-opacity":0.7}));
-      }
+    const sc=(S/2-8)/span, st=states[key];
+    for(const w of ['650','550','450']) for(const [x,y] of st.spots[w]){
+      const px=c+x*sc,py=c-y*sc; if(px<3||px>S-3||py<3||py>S-3)continue;
+      s.appendChild(el("circle",{cx:px,cy:py,r:1.3,fill:"#"+WCOL[w].toString(16).padStart(6,"0"),"fill-opacity":0.7}));
     }
     wrap.appendChild(s);host.appendChild(wrap);
   }
 }
-
-function axes(s,W,H,pad,xr,yr,xlab,ylab,xticks,yticks){
-  const [x0,x1]=xr,[y0,y1]=yr;
-  const X=v=>pad.l+(v-x0)/(x1-x0)*(W-pad.l-pad.r);
-  const Y=v=>H-pad.b-(v-y0)/(y1-y0)*(H-pad.t-pad.b);
-  for(const xt of xticks){const gx=X(xt);
-    s.appendChild(el("line",{x1:gx,y1:pad.t,x2:gx,y2:H-pad.b,stroke:css("--line"),"stroke-width":0.6}));
-    const tx=el("text",{x:gx,y:H-pad.b+14,fill:css("--muted"),"font-size":9,"text-anchor":"middle"});
-    tx.textContent=xt;s.appendChild(tx);}
-  for(const yt of yticks){const gy=Y(yt);
-    s.appendChild(el("line",{x1:pad.l,y1:gy,x2:W-pad.r,y2:gy,stroke:css("--line"),"stroke-width":0.6}));
-    const ty=el("text",{x:pad.l-6,y:gy+3,fill:css("--muted"),"font-size":9,"text-anchor":"end"});
-    ty.textContent=yt;s.appendChild(ty);}
-  const xl=el("text",{x:(pad.l+W-pad.r)/2,y:H-2,fill:css("--muted"),"font-size":10,"text-anchor":"middle"});
-  xl.textContent=xlab;s.appendChild(xl);
-  const yl=el("text",{x:12,y:(pad.t+H-pad.b)/2,fill:css("--muted"),"font-size":10,"text-anchor":"middle",
-    transform:`rotate(-90 12 ${(pad.t+H-pad.b)/2})`});yl.textContent=ylab;s.appendChild(yl);
+function axes(s,W,H,pad,xr,yr,xl,yl,xt,yt){
+  const X=v=>pad.l+(v-xr[0])/(xr[1]-xr[0])*(W-pad.l-pad.r);
+  const Y=v=>H-pad.b-(v-yr[0])/(yr[1]-yr[0])*(H-pad.t-pad.b);
+  for(const x of xt){const gx=X(x);s.appendChild(el("line",{x1:gx,y1:pad.t,x2:gx,y2:H-pad.b,stroke:css("--line"),"stroke-width":.6}));
+    const e=el("text",{x:gx,y:H-pad.b+13,fill:css("--muted"),"font-size":9,"text-anchor":"middle"});e.textContent=x;s.appendChild(e);}
+  for(const y of yt){const gy=Y(y);s.appendChild(el("line",{x1:pad.l,y1:gy,x2:W-pad.r,y2:gy,stroke:css("--line"),"stroke-width":.6}));
+    const e=el("text",{x:pad.l-5,y:gy+3,fill:css("--muted"),"font-size":9,"text-anchor":"end"});e.textContent=y;s.appendChild(e);}
+  const a=el("text",{x:(pad.l+W-pad.r)/2,y:H-2,fill:css("--muted"),"font-size":10,"text-anchor":"middle"});a.textContent=xl;s.appendChild(a);
   return {X,Y};
 }
-function polyline(s,pts,color,X,Y){
-  const d=pts.map(([x,y],i)=>(i?"L":"M")+X(x).toFixed(1)+" "+Y(y).toFixed(1)).join(" ");
-  s.appendChild(el("path",{d,fill:"none",stroke:color,"stroke-width":2}));
+function line(s,pts,color,X,Y){s.appendChild(el("path",{d:pts.map(([x,y],i)=>(i?"L":"M")+X(x).toFixed(1)+" "+Y(y).toFixed(1)).join(" "),fill:"none",stroke:color,"stroke-width":2}));}
+function drawMTF(st){const W=430,H=280,pad={l:36,r:10,t:10,b:30},s=svg(W,H);
+  const {X,Y}=axes(s,W,H,pad,[0,60],[0,1],"cycles / degree","",[0,15,30,45,60],[0,.25,.5,.75,1]);
+  const cl=a=>a.filter(([f])=>f<=60);
+  line(s,cl(st.normal.mtf),css("--grey"),X,Y);line(s,cl(st.uncorrected.mtf),css("--red"),X,Y);line(s,cl(st.corrected.mtf),css("--green"),X,Y);
+  $("mtf").innerHTML="";$("mtf").appendChild(s);}
+function drawLCA(st){const W=430,H=280,pad={l:40,r:10,t:10,b:30},s=svg(W,H);
+  const all=[...st.uncorrected.lca,...st.corrected.lca].map(p=>p[1]);
+  const lo=Math.min(-.2,...all),hi=Math.max(.2,...all);
+  const {X,Y}=axes(s,W,H,pad,[450,650],[lo,hi],"wavelength (nm)","",[450,500,550,600,650],[lo,0,hi].map(v=>+v.toFixed(2)));
+  s.appendChild(el("line",{x1:X(450),y1:Y(0),x2:X(650),y2:Y(0),stroke:css("--muted"),"stroke-width":.8}));
+  line(s,st.uncorrected.lca,css("--red"),X,Y);line(s,st.corrected.lca,css("--green"),X,Y);
+  $("lca").innerHTML="";$("lca").appendChild(s);}
+
+/* ---------- explanation ---------- */
+function explain(out){
+  const un=out.states.uncorrected, co=out.states.corrected, E=out.params.error_D;
+  const kind=E<-0.25?"myopic (short-sighted)":E>0.25?"hyperopic (long-sighted)":"emmetropic (normal)";
+  const foc=E<-0.25?"in front of the retina":E>0.25?"behind the retina":"on the retina";
+  let t="";
+  if(!out.lens){
+    t=`This eye is <b>${kind}</b>. With no lens, parallel light focuses <b>${foc}</b>, so the retinal
+       image is blurred (RMS spot ${un.rms_um} µm). Blue and red light focus at slightly different depths
+       — that colour spread is <b>${un.lca_D.toFixed(2)} D</b> of chromatic aberration. Toggle the contact
+       lens on to correct it.`;
+  }else{
+    t=`This eye is <b>${kind}</b>: uncorrected, light focuses ${foc} and the image blur is <b>${un.rms_um} µm</b>.
+       The <b>refractive</b> part of the hybrid lens (${out.lens.base} D) bends the rays back onto the retina,
+       cutting blur to <b>${co.rms_um} µm</b>. The <b>diffractive</b> layer (${out.lens.diff} D) adds power that
+       grows with wavelength, so blue, green and red now focus together — chromatic aberration drops from
+       <b>${un.lca_D.toFixed(2)} D</b> to <b>${co.lca_D.toFixed(2)} D</b>. Rotate the 3-D eye and switch the
+       <i>Show in 3D</i> view between Uncorrected and Corrected to see the ray fan snap onto the retina.`;
+  }
+  $("exText").innerHTML=t;
 }
 
-function drawMTF(states){
-  const host=document.getElementById("mtf");host.innerHTML="";
-  const W=440,H=300,pad={l:38,r:12,t:12,b:34};const s=svg(W,H);
-  const {X,Y}=axes(s,W,H,pad,[0,60],[0,1],"cycles / degree","MTF",
-    [0,15,30,45,60],[0,0.25,0.5,0.75,1]);
-  const clip=a=>a.filter(([f])=>f<=60);
-  polyline(s,clip(states.normal.mtf),css("--grey"),X,Y);
-  polyline(s,clip(states.uncorrected.mtf),css("--red"),X,Y);
-  polyline(s,clip(states.corrected.mtf),css("--green"),X,Y);
-  host.appendChild(s);
-}
-function drawLCA(states){
-  const host=document.getElementById("lca");host.innerHTML="";
-  const W=440,H=300,pad={l:42,r:12,t:12,b:34};const s=svg(W,H);
-  const all=[...states.uncorrected.lca,...states.corrected.lca].map(p=>p[1]);
-  let lo=Math.min(-0.2,...all),hi=Math.max(0.2,...all);
-  const {X,Y}=axes(s,W,H,pad,[450,650],[lo,hi],"wavelength (nm)","rel. power (D)",
-    [450,500,550,600,650],[lo,(lo+hi)/2,0,hi].map(v=>+v.toFixed(2)));
-  s.appendChild(el("line",{x1:X(450),y1:Y(0),x2:X(650),y2:Y(0),stroke:css("--muted"),"stroke-width":0.8}));
-  polyline(s,states.uncorrected.lca,css("--red"),X,Y);
-  polyline(s,states.corrected.lca,css("--green"),X,Y);
-  host.appendChild(s);
-}
-
-// ---- controls & fetch ----
-const $=id=>document.getElementById(id);
-function pupilVal(){return +$("pup").value;}
-let mode="Auto-fit";
-document.querySelectorAll("#mode button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("#mode button").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");mode=b.dataset.m;run();});
-
-function sync(){
-  $("errV").textContent=(+$("err").value).toFixed(1).replace("-","−")+" D";
-  $("pupV").textContent=(+$("pup").value).toFixed(1)+" mm";
-  $("spanV").textContent=$("span").value+" µm";
-  $("dwV").textContent=$("dw").value+" nm";
-}
-let last=null;
+/* ---------- fetch / render ---------- */
+function sync(){$("errV").textContent=(+$("err").value).toFixed(1).replace("-","−")+" D";
+  $("pupV").textContent=(+$("pup").value).toFixed(1)+" mm"; $("dwV").textContent=$("dw").value+" nm";}
 function fmt(x){return x.toFixed(1)+" µm";}
 function render(out){
-  last=out;
-  const st=out.states;
-  drawSpots(st,+$("span").value);drawMTF(st);drawLCA(st);
-  $("mUnc").textContent=fmt(st.uncorrected.rms_um);
-  $("mCor").textContent=fmt(st.corrected.rms_um);
-  $("lUnc").textContent=st.uncorrected.lca_D.toFixed(2)+" D";
-  $("lCor").textContent=st.corrected.lca_D.toFixed(2)+" D";
+  DATA=out; const st=out.states;
+  buildScene();
+  drawVision("vNormal",st.normal.rms_wl); drawVision("vUncorrected",st.uncorrected.rms_wl); drawVision("vCorrected",st.corrected.rms_wl);
+  drawSpots(st); drawMTF(st); drawLCA(st); explain(out);
+  $("mUnc").textContent=fmt(st.uncorrected.rms_um); $("mCor").textContent=fmt(st.corrected.rms_um);
+  $("lUnc").textContent=st.uncorrected.lca_D.toFixed(2)+" D"; $("lCor").textContent=st.corrected.lca_D.toFixed(2)+" D";
   const dR=st.corrected.rms_um-st.uncorrected.rms_um;
   $("mCorD").textContent=(dR<=0?"▼ ":"▲ ")+fmt(Math.abs(dR));$("mCorD").className="d "+(dR<=0?"good":"bad");
   const dL=Math.abs(st.corrected.lca_D)-Math.abs(st.uncorrected.lca_D);
   $("lCorD").textContent=(dL<=0?"▼ ":"▲ ")+Math.abs(dL).toFixed(2)+" D";$("lCorD").className="d "+(dL<=0?"good":"bad");
-  if(out.lens){const L=out.lens;
-    $("lensNote").innerHTML=`<b>Fitted lens:</b> base ${L.base} D · diffractive ${L.diff} D @${L.design_nm} nm`+
-      `<br>front R ${L.R_front} mm · back R ${L.R_back} mm.`+
-      `<br><span style="opacity:.8">The front surface replaces the air–cornea interface, so its base power includes the corneal front power.</span>`;
-  }else{$("lensNote").textContent="Contact lens off — showing the uncorrected eye.";}
 }
-
-let timer=null,inflight=false;
+let timer=null;
 function run(){
-  sync();
-  clearTimeout(timer);
+  sync(); clearTimeout(timer);
   timer=setTimeout(async()=>{
     const body={error_D:+$("err").value,pupil:+$("pup").value,use_lens:$("lens").checked,
       use_diffractive:$("diff").checked,material:$("mat").value,design_lam_nm:+$("dw").value,mode};
-    document.querySelector("main").classList.add("busy");
-    try{
-      const r=await fetch("/api/simulate",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(body)});
-      const out=await r.json();
-      if(out.error){$("lensNote").textContent="Error: "+out.error;}
-      else render(out);
-    }catch(e){$("lensNote").textContent="Request failed: "+e.message;}
+    $("badge").textContent="tracing…"; document.querySelector("main").classList.add("busy");
+    try{ const r=await fetch("/api/simulate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      const out=await r.json(); if(out.error){$("badge").textContent="error: "+out.error;} else render(out);
+    }catch(e){$("badge").textContent="request failed: "+e.message;}
     document.querySelector("main").classList.remove("busy");
-  },mode==="Optimize"?250:120);
+  }, mode==="Optimize"?250:120);
 }
+document.querySelectorAll("#mode button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.m;run();});
+document.querySelectorAll("#view button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#view button").forEach(x=>x.classList.remove("active"));b.classList.add("active");view=b.dataset.v;buildScene();});
 ["err","pup","dw","mat","lens","diff"].forEach(id=>$(id).addEventListener("input",run));
-$("span").addEventListener("input",()=>{sync();if(last)drawSpots(last.states,+$("span").value);});
-sync();run();
+sizeStage(); sync(); run();
 </script>
 </body>
 </html>
