@@ -6,13 +6,9 @@
 <title>3D Eye &amp; Hybrid Contact-Lens Simulator</title>
 <style>
   :root{
-    --bg:#0b0e1a; --panel:#141829; --panel2:#1b2039; --line:#2a3050;
-    --txt:#e9edf8; --muted:#98a1c0; --accent:#6ea8fe; --good:#37c98b; --bad:#ff6b6b;
-    --blue:#5b8bff; --green:#37c98b; --red:#ff6b6b; --grey:#8a93b2; --radius:14px;
-  }
-  @media (prefers-color-scheme:light){
-    :root{--bg:#eef1f8;--panel:#ffffff;--panel2:#f2f5fc;--line:#e0e5f0;
-      --txt:#141a2b;--muted:#5b6484;--accent:#2f6bff;--grey:#6b7392;}
+    --bg:#ffffff; --panel:#ffffff; --panel2:#f5f7fb; --line:#e0e4ee;
+    --txt:#161a24; --muted:#5c6478; --accent:#2f6bff; --good:#12805a; --bad:#c9372c;
+    --blue:#2f5fd0; --green:#12805a; --red:#c9372c; --grey:#79839c; --radius:14px;
   }
   *{box-sizing:border-box}
   body{margin:0;font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
@@ -37,14 +33,14 @@
   .seg button{flex:1;background:none;border:0;color:var(--muted);padding:8px 4px;font-size:.8rem;cursor:pointer}
   .seg button.active{background:var(--accent);color:#fff;font-weight:600}
   #stage{position:relative;width:100%;height:440px;border-radius:var(--radius);overflow:hidden;
-    background:radial-gradient(120% 120% at 30% 20%, #1a2038 0%, #0a0d18 100%);
+    background:radial-gradient(120% 120% at 30% 20%,#ffffff 0%,#eef1f8 100%);
     border:1px solid var(--line)}
-  @media (prefers-color-scheme:light){#stage{background:radial-gradient(120% 120% at 30% 20%,#f7f9ff,#e7ecf8)}}
   #stage canvas{display:block}
   .badge{position:absolute;top:10px;left:12px;font-size:.78rem;color:var(--muted);
-    background:rgba(0,0,0,.35);padding:4px 9px;border-radius:20px;backdrop-filter:blur(4px)}
+    background:rgba(255,255,255,.8);border:1px solid var(--line);
+    padding:4px 9px;border-radius:20px;backdrop-filter:blur(4px)}
   .hint{position:absolute;bottom:10px;right:12px;font-size:.72rem;color:var(--muted);
-    background:rgba(0,0,0,.3);padding:3px 8px;border-radius:20px}
+    background:rgba(255,255,255,.8);border:1px solid var(--line);padding:3px 8px;border-radius:20px}
   .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.76rem;color:var(--muted);margin-top:8px}
   .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
   .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
@@ -58,7 +54,8 @@
   .vis3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
   @media(max-width:680px){.vis3{grid-template-columns:1fr}}
   .vtitle{text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:6px}
-  canvas.vision{width:100%;height:auto;border-radius:10px;background:#000;display:block}
+  canvas.vision{width:100%;height:auto;border-radius:10px;background:#000;display:block;
+    border:1px solid var(--line)}
   h2{font-size:1.05rem;margin:26px 0 4px}
   .cap{color:var(--muted);font-size:.8rem;margin-top:8px}
   details{margin-top:14px}
@@ -79,9 +76,9 @@
 </head>
 <body>
 <header>
-  <h1>👁️ 3D Eye &amp; Hybrid Diffractive–Refractive Contact-Lens Simulator</h1>
-  <div class="sub">Watch light rays travel through a real ray-traced eye, see where they focus,
-    how the eye <em>sees</em>, and how a hybrid contact lens fixes blur and colour fringing.</div>
+  <h1>3D Eye and Hybrid Diffractive-Refractive Contact-Lens Simulator</h1>
+  <div class="sub">Ray traces a schematic eye at three wavelengths and reports where each one focuses,
+    with and without a hybrid contact lens.</div>
 </header>
 
 <div class="wrap">
@@ -116,10 +113,10 @@
       <span><span class="dot" style="background:var(--blue)"></span>450 nm (blue)</span>
       <span><span class="dot" style="background:var(--green)"></span>550 nm (green)</span>
       <span><span class="dot" style="background:var(--red)"></span>650 nm (red)</span>
-      <span><span class="dot" style="background:#8fb7ff"></span>cornea</span>
-      <span><span class="dot" style="background:#f4c66b"></span>lens</span>
-      <span><span class="dot" style="background:#ff9db0"></span>retina</span>
-      <span><span class="dot" style="background:#66e0d0"></span>contact lens</span>
+      <span><span class="dot" style="background:#4a86d8"></span>cornea</span>
+      <span><span class="dot" style="background:#c08a1e"></span>lens</span>
+      <span><span class="dot" style="background:#d45c78"></span>retina</span>
+      <span><span class="dot" style="background:#0f9c8e"></span>contact lens</span>
     </div>
 
     <div class="metrics">
@@ -130,13 +127,13 @@
     </div>
 
     <div class="card explain">
-      <h3 id="exTitle">What you're seeing</h3>
+      <h3 id="exTitle">Summary</h3>
       <div class="lead" id="exText">…</div>
     </div>
 
-    <h2>How the eye would see it</h2>
-    <div class="cap">A letter chart rendered with the exact blur of each case. Different blur for red/green/blue
-      light shows up as coloured fringing — the chromatic aberration the diffractive layer removes.</div>
+    <h2>Simulated retinal image</h2>
+    <div class="cap">A letter chart blurred by the RMS spot size computed for each case, per wavelength.
+      Where the red, green and blue blur differ, the letters show coloured fringes.</div>
     <div class="vis3">
       <div><div class="vtitle">Normal eye</div><canvas class="vision" id="vNormal" width="260" height="180"></canvas></div>
       <div><div class="vtitle">Uncorrected</div><canvas class="vision" id="vUncorrected" width="260" height="180"></canvas></div>
@@ -144,7 +141,7 @@
     </div>
 
     <details>
-      <summary>Show the optical analysis (spot diagrams · MTF · chromatic aberration)</summary>
+      <summary>Optical analysis: spot diagrams, MTF, chromatic aberration</summary>
       <div class="card" style="margin-top:12px">
         <h3>Retinal spot diagrams</h3>
         <div class="grid3" id="spots"></div>
@@ -165,16 +162,18 @@
   </main>
 </div>
 
-<footer>Physically accurate geometric ray tracing · Navarro schematic eye (Escudero-Sanz &amp; Navarro 1999) ·
-  NumPy on a Vercel Python function. The 3-D anatomy is schematic; the rays and all numbers are from the real trace.</footer>
+<footer>Geometric ray tracing through the Navarro schematic eye (Escudero-Sanz &amp; Navarro, 1999), computed
+  in the browser. The 3D anatomy is schematic; the ray paths and all reported numbers come from the trace.</footer>
 
+<script src="eyesim.js"></script>
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const $=id=>document.getElementById(id);
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const WCOL={'450':0x5b8bff,'550':0x37c98b,'650':0xff6b6b};
+const WCOL={'450':0x2f5fd0,'550':0x12805a,'650':0xc9372c};
+const ANAT={cornea:0x4a86d8,lens:0xc08a1e,retina:0xd45c78,cl:0x0f9c8e,globe:0x8b97b5};
 let mode="Auto-fit", view="uncorrected", DATA=null, camInit=false;
 
 /* ---------- Three.js scene ---------- */
@@ -199,7 +198,7 @@ addEventListener("resize",sizeStage);
 function clearGroup(g){ while(g.children.length){const c=g.children.pop();
   if(c.geometry)c.geometry.dispose(); if(c.material)c.material.dispose(); g.remove(c);} }
 
-function labelSprite(text,x,y,z,color="#cfd6ee"){
+function labelSprite(text,x,y,z,color="#3b4358"){
   const c=document.createElement("canvas"); c.width=256; c.height=64;
   const g=c.getContext("2d"); g.font="bold 34px system-ui"; g.fillStyle=color;
   g.textAlign="center"; g.textBaseline="middle"; g.fillText(text,128,32);
@@ -235,30 +234,31 @@ function buildScene(){
   const pupil=DATA.params.pupil;
 
   // optical axis
-  const axisMat=new THREE.LineBasicMaterial({color:0x44507a});
+  const axisMat=new THREE.LineBasicMaterial({color:0x9aa3bd});
   world.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(
     [new THREE.Vector3(-4,0,0),new THREE.Vector3(retina+1,0,0)]),axisMat));
 
   // eyeball globe
-  world.add(ellipsoid(retina/2,retina/2,retina/2*0.92,0xdfe6ff,0.08));
+  world.add(ellipsoid(retina/2,retina/2,retina/2*0.92,ANAT.globe,0.13));
   // cornea (front dome)
-  world.add(ellipsoid(0.9,1.4,5.4,0x8fb7ff,0.28));
+  world.add(ellipsoid(0.9,1.4,5.4,ANAT.cornea,0.3));
   // iris + pupil hole
-  world.add(ring(antLens-0.05,pupil/2,5.6,0x6b4a2f));
+  world.add(ring(antLens-0.05,pupil/2,5.6,0x8a5f3c));
   // crystalline lens
-  world.add(ellipsoid((antLens+postLens)/2,(postLens-antLens)/2,4.3,0xf4c66b,0.5));
+  world.add(ellipsoid((antLens+postLens)/2,(postLens-antLens)/2,4.3,ANAT.lens,0.5));
   // retina patch (concave-ish)
-  world.add(disc(retina,4.6,0xff9db0,0.85));
+  world.add(disc(retina,4.6,ANAT.retina,0.85));
   // contact lens if worn & showing the corrected eye
   if(view==="corrected" && DATA.lens){
     const cf=surfZ(state,'cl-front-diffractive')??-0.2;
-    world.add(ellipsoid(cf,0.5,6.2,0x66e0d0,0.33));
+    world.add(ellipsoid(cf,0.5,6.2,ANAT.cl,0.35));
   }
   // labels
-  world.add(labelSprite("Cornea",0.9,7.2,0,"#8fb7ff"));
-  world.add(labelSprite("Lens",(antLens+postLens)/2,6,0,"#f4c66b"));
-  world.add(labelSprite("Retina",retina,6,0,"#ff9db0"));
-  if(view==="corrected"&&DATA.lens) world.add(labelSprite("Contact lens",-1,8.6,0,"#66e0d0"));
+  const hex=c=>"#"+c.toString(16).padStart(6,"0");
+  world.add(labelSprite("Cornea",0.9,7.2,0,hex(ANAT.cornea)));
+  world.add(labelSprite("Lens",(antLens+postLens)/2,6,0,hex(ANAT.lens)));
+  world.add(labelSprite("Retina",retina,6,0,hex(ANAT.retina)));
+  if(view==="corrected"&&DATA.lens) world.add(labelSprite("Contact lens",-1,8.6,0,hex(ANAT.cl)));
 
   // rays (real trace)
   for(const wl of ['650','550','450']){
@@ -271,7 +271,7 @@ function buildScene(){
   // where the green marginal ray crosses the axis (the focus)
   const focus=greenFocus(state);
   if(focus!==null){
-    const col= focus<retina-0.15?0xff6b6b : (focus>retina+0.15?0xffb347:0x37c98b);
+    const col= focus<retina-0.15?0xc9372c : (focus>retina+0.15?0xd08a12:0x12805a);
     const mk=new THREE.Mesh(new THREE.SphereGeometry(0.35,16,12),
       new THREE.MeshBasicMaterial({color:col}));
     mk.position.set(focus,0,0); world.add(mk);
@@ -279,7 +279,7 @@ function buildScene(){
 
   if(!camInit){ camera.position.set(retina*0.5,12,42);
     controls.target.set(retina*0.5,0,0); controls.update(); camInit=true; }
-  $("badge").textContent=({normal:"Normal eye",uncorrected:"Uncorrected — "+DATA.params.error_D.toFixed(1)+" D",
+  $("badge").textContent=({normal:"Normal eye",uncorrected:"Uncorrected, "+DATA.params.error_D.toFixed(1)+" D",
     corrected:"Corrected with hybrid lens"})[view];
 }
 
@@ -363,17 +363,15 @@ function explain(out){
   const foc=E<-0.25?"in front of the retina":E>0.25?"behind the retina":"on the retina";
   let t="";
   if(!out.lens){
-    t=`This eye is <b>${kind}</b>. With no lens, parallel light focuses <b>${foc}</b>, so the retinal
-       image is blurred (RMS spot ${un.rms_um} µm). Blue and red light focus at slightly different depths
-       — that colour spread is <b>${un.lca_D.toFixed(2)} D</b> of chromatic aberration. Toggle the contact
-       lens on to correct it.`;
+    t=`The eye is ${kind}. With no lens, parallel light focuses ${foc}, giving an RMS spot of
+       ${un.rms_um} µm at the retina. Blue and red focus at different depths, a spread of
+       ${un.lca_D.toFixed(2)} D of longitudinal chromatic aberration.`;
   }else{
-    t=`This eye is <b>${kind}</b>: uncorrected, light focuses ${foc} and the image blur is <b>${un.rms_um} µm</b>.
-       The <b>refractive</b> part of the hybrid lens (${out.lens.base} D) bends the rays back onto the retina,
-       cutting blur to <b>${co.rms_um} µm</b>. The <b>diffractive</b> layer (${out.lens.diff} D) adds power that
-       grows with wavelength, so blue, green and red now focus together — chromatic aberration drops from
-       <b>${un.lca_D.toFixed(2)} D</b> to <b>${co.lca_D.toFixed(2)} D</b>. Rotate the 3-D eye and switch the
-       <i>Show in 3D</i> view between Uncorrected and Corrected to see the ray fan snap onto the retina.`;
+    t=`The eye is ${kind}. Uncorrected, light focuses ${foc} and the RMS spot is ${un.rms_um} µm.
+       The refractive part of the hybrid lens (${out.lens.base} D) returns the focus to the retina,
+       reducing the spot to ${co.rms_um} µm. The diffractive layer (${out.lens.diff} D) has power that
+       increases with wavelength, bringing the three wavelengths to a common focus: chromatic aberration
+       falls from ${un.lca_D.toFixed(2)} D to ${co.lca_D.toFixed(2)} D.`;
   }
   $("exText").innerHTML=t;
 }
@@ -397,15 +395,14 @@ function render(out){
 let timer=null;
 function run(){
   sync(); clearTimeout(timer);
-  timer=setTimeout(async()=>{
+  timer=setTimeout(()=>{
     const body={error_D:+$("err").value,pupil:+$("pup").value,use_lens:$("lens").checked,
       use_diffractive:$("diff").checked,material:$("mat").value,design_lam_nm:+$("dw").value,mode};
     $("badge").textContent="tracing…"; document.querySelector("main").classList.add("busy");
-    try{ const r=await fetch("/api/simulate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-      const out=await r.json(); if(out.error){$("badge").textContent="error: "+out.error;} else render(out);
-    }catch(e){$("badge").textContent="request failed: "+e.message;}
+    try{ render(EyeSim.simulate(body)); }
+    catch(e){ $("badge").textContent="error: "+e.message; console.error(e); }
     document.querySelector("main").classList.remove("busy");
-  }, mode==="Optimize"?250:120);
+  }, 30);
 }
 document.querySelectorAll("#mode button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.m;run();});
 document.querySelectorAll("#view button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#view button").forEach(x=>x.classList.remove("active"));b.classList.add("active");view=b.dataset.v;buildScene();});
